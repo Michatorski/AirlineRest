@@ -11,31 +11,34 @@ import java.util.List;
 import java.util.Map;
 
 public class FlightClient implements FlightAPI {
-    private String flightService;
     private RestTemplate restTemplate;
 
-    public FlightClient(String flightService, RestTemplate restTemplate) {
-        this.flightService = flightService;
+    public FlightClient(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
     }
 
     @Override
     public List<Flight> list(String origin) {
-        if(origin == null) {
-            Flight[]  flights = restTemplate.getForObject(
-                    flightService + "/flights",
-                    Flight[].class
-            );
-            return Arrays.asList(flights);
-        } else {
-            Map<String, Object> params = new HashMap<>();
+
+        Map<String, Object> params = new HashMap<>();
+        if (origin != null) {
             params.put("origin", origin);
-            Flight[]  flights = restTemplate.getForObject(
-                    "http://localhost:8080/flights",
-                    Flight[].class,
-                    params
-            );
-            return Arrays.asList(flights);
         }
+
+        Flight[] flights = restTemplate.getForObject(
+                "/flights",
+                Flight[].class,
+                params
+        );
+        return Arrays.asList(flights);
+
+    }
+
+    @Override
+    public Flight getFlight(String flightNumber) {
+        return restTemplate.getForObject(
+                "/flights/" + flightNumber,
+                Flight.class
+        );
     }
 }

@@ -3,6 +3,8 @@ package org.iesfm.rest.swing;
 import org.iesfm.rest.Flight;
 import org.iesfm.rest.FlightAPI;
 import org.iesfm.rest.clients.FlightClient;
+import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import javax.swing.*;
@@ -15,13 +17,17 @@ public class FlightSwing {
         JPanel panel = new JPanel();
 
         FlightClient flightAPI = new FlightClient(
-                "http://localhost:8080",
-                new RestTemplate()
+                new RestTemplateBuilder().rootUri("http://localhost:8080").build()
         );
 
         List<Flight> flights = flightAPI.list(null);
-        for(Flight flight: flights) {
+        for (Flight flight : flights) {
             panel.add(new JLabel(flight.toString()));
+        }
+        try {
+            Flight flight = flightAPI.getFlight("no existe");
+        }catch (HttpClientErrorException.NotFound e) {
+            JOptionPane.showMessageDialog(frame, "No se encuentra el vuelo");
         }
 
         frame.add(panel);
