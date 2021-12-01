@@ -1,6 +1,7 @@
 package org.iesfm.rest.controllers;
 
 import org.iesfm.rest.Flight;
+import org.iesfm.rest.FlightAPI;
 import org.iesfm.rest.dao.FlightDAO;
 import org.iesfm.rest.exceptions.FlightNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -13,13 +14,14 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
-public class FlightController {
+public class FlightController implements FlightAPI {
     private FlightDAO flightDAO;
 
     public FlightController(FlightDAO flightDAO) {
         this.flightDAO = flightDAO;
     }
 
+    @Override
     @RequestMapping(method = RequestMethod.GET, path = "/flights")
     public List<Flight> list(
             @RequestParam(value = "origin", required = false) String origin
