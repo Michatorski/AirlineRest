@@ -38,17 +38,21 @@ public class FlightClient implements FlightAPI {
 
     @Override
     public Flight getFlight(String flightNumber) {
-        return restTemplate
-                .getForObject(
-                        "/flights/" + flightNumber,
-                        Flight.class
-                );
+        try {
+            return restTemplate
+                    .getForObject(
+                            "/flights/" + flightNumber,
+                            Flight.class
+                    );
+        } catch (HttpClientErrorException.NotFound e) {
+            return null;
+        }
     }
 
     @Override
-    public ResponseEntity<Void> createFlight(Flight flight) {
+    public void createFlight(Flight flight) {
 
-        return restTemplate.postForEntity("/flights", flight, Void.class);
+        restTemplate.postForObject("/flights", flight, Void.class);
 
     }
 }

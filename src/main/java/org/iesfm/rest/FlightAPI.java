@@ -12,5 +12,5 @@ public interface FlightAPI {
 
     Flight getFlight(String flightNumber);
 
-    ResponseEntity<Void> createFlight(Flight flight);
+    void createFlight(Flight flight);
 }

@@ -1,15 +1,12 @@
 package org.iesfm.rest.swing;
 
 import org.iesfm.rest.Flight;
-import org.iesfm.rest.clients.ErrorHandler;
 import org.iesfm.rest.clients.FlightClient;
 import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.HttpClientErrorException;
 
 import javax.swing.*;
-import java.util.List;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class AirlineSwingMain {
 
@@ -19,31 +16,26 @@ public class AirlineSwingMain {
 
         FlightClient flightAPI = new FlightClient(
                 new RestTemplateBuilder()
-                        .errorHandler(new ErrorHandler())
                         .rootUri("http://localhost:8080")
                         .build()
         );
-        ResponseEntity<Void> response = flightAPI.createFlight(new Flight(
-                "23234",
-                "Barcelona",
-                "Madrid"
-        ));
-        if(response.getStatusCodeValue() == HttpStatus.CREATED.value()) {
-            JOptionPane.showMessageDialog(frame, "Se ha creado el vuelo");
-        } else if(response.getStatusCodeValue() == HttpStatus.CONFLICT.value()){
-            JOptionPane.showMessageDialog(frame, "Ya existía el vuelo");
-        }
 
-        List<Flight> flights = flightAPI.list(null);
-        for (Flight flight : flights) {
-            panel.add(new JLabel(flight.toString()));
-        }
-        try {
-            Flight flight = flightAPI.getFlight("no existe");
-        }catch (HttpClientErrorException.NotFound e) {
-            JOptionPane.showMessageDialog(frame, "No se encuentra el vuelo");
-        }
-
+        JTextField flightNumberField = new JTextField();
+        flightNumberField.setText("0000000");
+        panel.add(flightNumberField);
+        JButton boton = new JButton("Pedir vuelo");
+        boton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                Flight flight = flightAPI.getFlight(flightNumberField.getText());
+                if(flight == null) {
+                    JOptionPane.showMessageDialog(frame, "No existe el vuelo");
+                } else {
+                    JOptionPane.showMessageDialog(frame, flight.toString());
+                }
+            }
+        });
+        panel.add(boton);
         frame.add(panel);
         frame.setVisible(true);
         frame.setBounds(0, 0, 600, 600);

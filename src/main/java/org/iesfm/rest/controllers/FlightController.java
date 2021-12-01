@@ -47,16 +47,15 @@ public class FlightController implements FlightAPI {
     }
 
     @RequestMapping(method = RequestMethod.POST, path = "/flights")
-    public ResponseEntity<Void> createFlight(@RequestBody Flight flight) {
+    public void createFlight(@RequestBody Flight flight) {
         if (!flightDAO.addFlight(flight)) {
             throw new ResponseStatusException(
                     HttpStatus.CONFLICT, "Ya existía el vuelo"
             );
         } else {
-            URI location = ServletUriComponentsBuilder
-                    .fromCurrentRequest().path("/{id}")
-                    .buildAndExpand(flight.getFlightNumber()).toUri();
-            return ResponseEntity.created(location).build();
+            throw new ResponseStatusException(
+                    HttpStatus.CREATED, "Ya existía el vuelo"
+            );
         }
     }
 

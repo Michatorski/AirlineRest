@@ -40,21 +40,24 @@ public class PassengerController {
     }
 
     @RequestMapping(method = RequestMethod.POST, path = "/flights/{flightNumber}/passengers     ")
-    public ResponseEntity<Void> createFlight(
+    public void createFlight(
             @PathVariable("flightNumber") String flightNumber,
             @RequestBody Passenger passenger) {
         try {
             flightDAO.getFlight(flightNumber);
             if (passengerDAO.addPassenger(flightNumber, passenger)) {
-                URI location = ServletUriComponentsBuilder
-                        .fromCurrentRequest().path("/{id}")
-                        .buildAndExpand(passenger.getNif()).toUri();
-                return ResponseEntity.created(location).build();
+                throw new ResponseStatusException(
+                        HttpStatus.CREATED, "Pasajero añadido"
+                );
             } else {
-                return ResponseEntity.status(HttpStatus.CONFLICT).build();
+                throw new ResponseStatusException(
+                        HttpStatus.CONFLICT, "Ya existía el pasajero"
+                );
             }
         } catch (FlightNotFoundException e) {
-            return ResponseEntity.notFound().build();
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "No existía el vuelo"
+            );
         }
     }
 
