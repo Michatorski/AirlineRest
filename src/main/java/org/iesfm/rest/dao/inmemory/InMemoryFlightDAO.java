@@ -14,6 +14,15 @@ public class InMemoryFlightDAO implements FlightDAO {
 
     private Map<String, Flight> flights = new HashMap<>();
 
+    public InMemoryFlightDAO() {
+        flights.put("12345", new Flight(
+                        "12345",
+                        "Madrid",
+                        "Barcelona"
+                )
+        );
+    }
+
     @Override
     public List<Flight> list() {
         return new LinkedList<>(flights.values());
@@ -26,7 +35,7 @@ public class InMemoryFlightDAO implements FlightDAO {
 
     @Override
     public Flight getFlight(String flightNumber) throws FlightNotFoundException {
-        if(flights.containsKey(flightNumber)) {
+        if (flights.containsKey(flightNumber)) {
             return flights.get(flightNumber);
         } else {
             throw new FlightNotFoundException();

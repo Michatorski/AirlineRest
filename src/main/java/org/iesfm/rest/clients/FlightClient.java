@@ -2,7 +2,9 @@ package org.iesfm.rest.clients;
 
 import org.iesfm.rest.Flight;
 import org.iesfm.rest.FlightAPI;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Arrays;
@@ -36,9 +38,17 @@ public class FlightClient implements FlightAPI {
 
     @Override
     public Flight getFlight(String flightNumber) {
-        return restTemplate.getForObject(
-                "/flights/" + flightNumber,
-                Flight.class
-        );
+        return restTemplate
+                .getForObject(
+                        "/flights/" + flightNumber,
+                        Flight.class
+                );
+    }
+
+    @Override
+    public ResponseEntity<Void> createFlight(Flight flight) {
+
+        return restTemplate.postForEntity("/flights", flight, Void.class);
+
     }
 }
